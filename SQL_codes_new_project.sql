@@ -4,10 +4,10 @@ use targets_db;
                  
 -- Business Request 1 : City-Level Fare and Trip Summary Report
 select * 
-from fact_trips;
+from trips_db.fact_trips;
 
 select count(*)
-from fact_trips;
+from trips_db.fact_trips;
 
 with cte1 as(select city_id, count(trip_id) as total_trips, round(sum(fare_amount)/sum(distance_travelled_km),2) as avg_fare_per_km, round(sum(fare_amount)/count(trip_id),2) as avg_fare_per_trip, round(count(trip_id)/425903 * 100 ,2) as percentage_contribution_to_total_trips
 from trips_db.fact_trips 
@@ -20,10 +20,10 @@ on cte1.city_id = dim_city.city_id;
 
 -- Business Request 2 : Monthly City-Level Trips Target Performance Report
 select *
-from monthly_target_trips;
+from targets_db.monthly_target_trips;
 
 select * 
-from fact_trips;
+from trips_db.fact_trips;
 
 -- fact_trips table from trips_db
 with cte5 as (with cte3 as (with cte2 as (select city_id, trip_id, monthname(date) as month_name
@@ -51,7 +51,7 @@ on cte5.city_id = trips_db.dim_city.city_id;
 
 -- Business Request 3 : City-Level Repeat Passenger Trip Frequency Report
 select *
-from dim_repeat_trip_distribution;
+from trips_db.dim_repeat_trip_distribution;
 
 with cte6 as (select city_id, trip_count, sum(repeat_passenger_count) as counts
 from trips_db.dim_repeat_trip_distribution
@@ -72,7 +72,7 @@ group by city_id;
 
 -- Business Request 4 : Identify Cities with Highest and Lowest Total New Passangers
 select *
-from fact_passenger_summary;
+from trips_db.fact_passenger_summary;
 
 with cte8 as ((select city_id, sum(new_passengers) as total_new_passengers, "Top 3" as city_category
 from trips_db.fact_passenger_summary 
@@ -95,7 +95,7 @@ order by total_new_passengers desc;
 
 -- Business Request 5 : Identify Month with Highest Revenue for Each City
 select *
-from fact_trips;
+from trips_db.fact_trips;
 
 with cte11 as (with cte10 as (with cte9  as (select monthname(date) as month_name, city_id, sum(fare_amount) as month_revenue
 from trips_db.fact_trips
